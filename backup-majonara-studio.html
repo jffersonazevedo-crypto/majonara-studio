@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#10111a">
+<title>Backup | MAJONARA STUDIO</title>
+<style>
+:root{--bg:#10111a;--panel:#191b29;--panel2:#25283b;--text:#f4f5fb;--muted:#a5a9bd;--accent:#a78bfa;--line:#34374c;--green:#55d6a2;--red:#ed8292}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{padding:24px 18px;background:linear-gradient(135deg,#292044,#111421);border-bottom:1px solid var(--line)}
+h1{font-size:23px;margin:0}header p,.muted{color:var(--muted);font-size:13px;line-height:1.5}
+main{max-width:700px;margin:auto;padding:15px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:16px;margin:14px 0}
+h2{font-size:18px;margin:0 0 10px}button{border:0;border-radius:10px;padding:13px 15px;background:var(--accent);color:#171323;font-weight:700;font-size:14px;margin:5px 5px 5px 0;cursor:pointer}
+.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}.danger{background:#713b48;color:white}
+input[type=file]{display:block;width:100%;margin:12px 0;color:var(--muted)}
+#status{padding:12px;border-radius:10px;background:#25233a;color:#ddd5ff;white-space:pre-wrap;font-size:13px;line-height:1.5}
+.stat{font-size:24px;font-weight:800;color:var(--green)}a{color:#c4b5fd}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:20px}
+</style>
+</head>
+<body>
+<header>
+  <h1>MAJONARA STUDIO</h1>
+  <p>Central segura de backup e restauração dos seus projetos.</p>
+</header>
+<main>
+  <section class="panel">
+    <h2>📁 Projetos encontrados neste Safari</h2>
+    <div class="stat" id="count">—</div>
+    <p class="muted" id="details">Lendo o armazenamento local…</p>
+    <button id="refresh" class="secondary">Atualizar leitura</button>
+  </section>
+
+  <section class="panel">
+    <h2>⬇️ Criar backup</h2>
+    <p class="muted">Baixa uma cópia dos projetos, incluindo roteiros, cortes, textos e aprovações. Guarde o arquivo em um local seguro, como Arquivos ou iCloud Drive.</p>
+    <button id="export">Exportar todos os projetos</button>
+  </section>
+
+  <section class="panel">
+    <h2>⬆️ Restaurar backup</h2>
+    <p class="muted">Escolha um arquivo JSON exportado por esta ferramenta. Você poderá acrescentar projetos ao que já existe ou substituir a lista atual.</p>
+    <input id="file" type="file" accept=".json,application/json">
+    <button id="merge">Adicionar projetos do backup</button>
+    <button id="replace" class="danger">Substituir projetos atuais</button>
+    <p class="muted">A opção “Adicionar” mantém os projetos atuais e ignora IDs duplicados. “Substituir” troca a lista inteira e só deve ser usada se você realmente quiser restaurar exatamente o conteúdo do arquivo.</p>
+  </section>
+
+  <section class="panel">
+    <h2>⚠️ Importante</h2>
+    <p class="muted">Esta ferramenta usa o mesmo armazenamento local do MAJONARA STUDIO neste endereço. Abra este arquivo pelo mesmo domínio do aplicativo e no Safari onde seus projetos estão salvos. Os dados do Chrome e do Safari são separados. Não limpe os dados do site antes de fazer um backup.</p>
+    <p><a href="./">Voltar ao MAJONARA STUDIO</a></p>
+  </section>
+  <div id="status" role="status">Pronto para verificar seus projetos.</div>
+  <footer>MAJONARA STUDIO · Ferramenta local de backup · Nenhum dado é enviado a servidores</footer>
+</main>
+<script>
+(function(){
+"use strict";
+const KEY="majonara_projects";
+const $=id=>document.getElementById(id);
+let current=[];
+function status(message){$("status").textContent=message;}
+function read(){
+  try{
+    const raw=localStorage.getItem(KEY);
+    if(raw===null){current=[];}
+    else{
+      const parsed=JSON.parse(raw);
+      if(!Array.isArray(parsed)) throw new Error("O conteúdo salvo não é uma lista de projetos.");
+      current=parsed;
+    }
+    $("count").textContent=String(current.length);
+    $("details").textContent=current.length
+      ? "Projeto(s) disponíveis neste armazenamento. Faça um backup antes de qualquer limpeza ou troca de aparelho."
+      : "Nenhum projeto foi encontrado nesta origem do navegador.";
+    status("Leitura concluída. Foram encontrados "+current.length+" projeto(s).");
+    return true;
+  }catch(e){
+    status("Não foi possível ler os dados: "+e.message);
+    $("count").textContent="!";
+    $("details").textContent="Verifique se o armazenamento do site está disponível.";
+    return false;
+  }
+}
+function downloadBackup(){
+  if(!read()) return;
+  const payload={
+    app:"MAJONARA STUDIO",
+    format:"majonara-backup",
+    version:1,
+    exportedAt:new Date().toISOString(),
+    projects:current
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  const date=new Date().toISOString().slice(0,10);
+  a.href=url;a.download="majonara-studio-backup-"+date+".json";
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+  status("Backup preparado com "+current.length+" projeto(s). Confira se o arquivo apareceu nos Downloads/Arquivos.");
+}
+async function getBackup(){
+  const file=$("file").files[0];
+  if(!file){status("Escolha primeiro um arquivo JSON.");return null;}
+  try{
+    const data=JSON.parse(await file.text());
+    const list=Array.isArray(data)?data:data&&Array.isArray(data.projects)?data.projects:null;
+    if(!list) throw new Error("Formato inválido: não encontrei uma lista de projetos.");
+    if(!list.every(p=>p&&typeof p==="object"&&!Array.isArray(p))) throw new Error("O arquivo contém itens inválidos.");
+    return list;
+  }catch(e){status("Não foi possível abrir o backup: "+e.message);return null;}
+}
+async function mergeBackup(){
+  const incoming=await getBackup();if(!incoming)return;
+  if(!read())return;
+  const known=new Set(current.map(p=>String(p.id??"")));
+  const additions=incoming.filter(p=>!known.has(String(p.id??"")));
+  const merged=current.concat(additions);
+  try{
+    localStorage.setItem(KEY,JSON.stringify(merged));
+    read();
+    status("Restauração concluída: "+additions.length+" projeto(s) adicionado(s). "+(incoming.length-additions.length)+" duplicado(s) ignorado(s).");
+  }catch(e){status("Falha ao salvar. Os dados anteriores foram mantidos se o navegador recusou a gravação. Detalhe: "+e.message);}
+}
+async function replaceBackup(){
+  const incoming=await getBackup();if(!incoming)return;
+  if(!confirm("ATENÇÃO: isso substituirá a lista atual de projetos pelos "+incoming.length+" projeto(s) do backup. Faça um backup dos dados atuais antes. Deseja continuar?"))return;
+  try{
+    localStorage.setItem(KEY,JSON.stringify(incoming));
+    read();
+    status("Lista restaurada com "+incoming.length+" projeto(s). Volte ao MAJONARA STUDIO e atualize a página.");
+  }catch(e){status("Não foi possível restaurar: "+e.message);}
+}
+$("refresh").addEventListener("click",read);
+$("export").addEventListener("click",downloadBackup);
+$("merge").addEventListener("click",mergeBackup);
+$("replace").addEventListener("click",replaceBackup);
+read();
+})();
+</script>
+</body>
+</html>
