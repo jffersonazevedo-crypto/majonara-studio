@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10121b">
+<title>MAJONARA STUDIO</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#10121b;color:#fff;font-family:Arial,sans-serif;padding:22px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+.logo{font-size:23px;font-weight:900;letter-spacing:1px}
+.logo span{color:#a78bfa}
+small{color:#aaa}
+h1{font-size:27px;margin-bottom:8px}
+p{color:#aaa;line-height:1.5}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+.card{background:#1d2030;border:1px solid #34384c;border-radius:15px;padding:18px}
+.card b{display:block;margin-top:10px}
+.card span{font-size:25px}
+button{border:0;border-radius:10px;padding:13px;background:#8b5cf6;color:white;font-weight:bold;cursor:pointer}
+.primary{width:100%;margin:12px 0}
+input,select{width:100%;padding:14px;margin:8px 0 14px;background:#1d2030;color:white;border:1px solid #41465c;border-radius:9px}
+.project{background:#1d2030;border-radius:12px;padding:15px;margin:10px 0}
+.project button{margin-top:10px;background:#34384c}
+section{margin-top:28px}
+.hidden{display:none}
+footer{text-align:center;color:#777;margin-top:35px;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+ <div>
+  <div class="logo">MAJONARA <span>STUDIO</span></div>
+  <small>SEU ESTÚDIO DE CRIAÇÃO</small>
+ </div>
+ <span>🎬</span>
+</header>
+
+<h1>Seu estúdio começa aqui.</h1>
+<p>Planeje, crie e aprove seus vídeos em um só lugar.</p>
+
+<div class="grid">
+ <div class="card"><span>📡</span><b>RADAR</b><small>Ideias e tendências</small></div>
+ <div class="card"><span>🧠</span><b>ROTEIRISTA</b><small>Histórias e roteiros</small></div>
+ <div class="card"><span>🎙️</span><b>NARRAÇÃO</b><small>Sua voz ou voz IA</small></div>
+ <div class="card"><span>🎨</span><b>ANIMAÇÃO</b><small>Cenas e personagens</small></div>
+</div>
+
+<button class="primary" onclick="showForm()">＋ NOVO PROJETO</button>
+
+<section id="form" class="hidden">
+ <h2>Novo projeto</h2>
+ <label>Nome do projeto</label>
+ <input id="name" placeholder="Ex.: GTA VI - Especial">
+ <label>Tema do vídeo</label>
+ <input id="topic" placeholder="Sobre o que será o vídeo?">
+ <label>Formato</label>
+ <select id="format">
+  <option>YouTube - 5 a 8 minutos</option>
+  <option>TikTok / Reels / Shorts</option>
+  <option>Vídeo longo + cortes curtos</option>
+ </select>
+ <button onclick="saveProject()">SALVAR PROJETO</button>
+ <button onclick="hideForm()" style="background:#34384c">CANCELAR</button>
+</section>
+
+<section>
+ <h2>Meus projetos</h2>
+ <div id="projects"></div>
+</section>
+
+<footer>MAJONARA STUDIO © 2026<br>CRIATIVIDADE SEM LIMITES</footer>
+
+<script>
+let projects=JSON.parse(localStorage.getItem("majonara_projects")||"[]");
+
+function showForm(){
+ document.getElementById("form").classList.remove("hidden");
+}
+function hideForm(){
+ document.getElementById("form").classList.add("hidden");
+}
+function saveProject(){
+ const name=document.getElementById("name").value.trim();
+ const topic=document.getElementById("topic").value.trim();
+ const format=document.getElementById("format").value;
+ if(!name||!topic){alert("Preencha o nome e o tema.");return;}
+ projects.push({name,topic,format,id:Date.now()});
+ localStorage.setItem("majonara_projects",JSON.stringify(projects));
+ document.getElementById("name").value="";
+ document.getElementById("topic").value="";
+ hideForm();
+ render();
+}
+function removeProject(id){
+ projects=projects.filter(p=>p.id!==id);
+ localStorage.setItem("majonara_projects",JSON.stringify(projects));
+ render();
+}
+function render(){
+ const area=document.getElementById("projects");
+ if(!projects.length){
+  area.innerHTML="<p>Nenhum projeto cadastrado ainda. Vamos criar o primeiro!</p>";
+  return;
+ }
+ area.innerHTML=projects.map(p=>`
+ <div class="project">
+ <b>${escapeText(p.name)}</b>
+ <p>${escapeText(p.topic)}</p>
+ <small>${escapeText(p.format)}</small><br>
+ <button onclick="removeProject(${p.id})">Excluir projeto</button>
+ </div>`).join("");
+}
+function escapeText(s){
+ const el=document.createElement("div");
+ el.textContent=s;
+ return el.innerHTML;
+}
+render();
+</script>
+</body>
+</html>
