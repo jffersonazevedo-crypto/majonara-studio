@@ -3,148 +3,523 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#10121b">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#10111a">
 <title>MAJONARA STUDIO</title>
 <style>
+:root{--bg:#10111a;--panel:#191b29;--panel2:#222538;--text:#f4f5fb;--muted:#a5a9bd;--accent:#a78bfa;--line:#34374c;--green:#55d6a2}
 *{box-sizing:border-box}
-body{margin:0;padding:22px;background:#10121b;color:white;font-family:Arial,sans-serif}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
-.logo{font-size:23px;font-weight:900}.logo span{color:#a78bfa}
-small,.muted{color:#aaa}
-h1{font-size:27px}p{color:#aaa;line-height:1.5}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
-.card,.project{background:#1d2030;border:1px solid #34384c;border-radius:14px;padding:16px}
-.card span{font-size:25px}.card b{display:block;margin:10px 0}
-button{padding:13px;border:0;border-radius:9px;background:#8b5cf6;color:white;font-weight:bold}
-.primary{width:100%;margin:12px 0}
-input,select,textarea{width:100%;padding:13px;margin:8px 0 14px;background:#1d2030;color:white;border:1px solid #41465c;border-radius:9px;font-size:15px}
-textarea{min-height:75px}
-label{font-size:13px;color:#ccc}
-section{margin-top:26px}
-.hidden{display:none}
-.project{margin:12px 0}
-.project button{margin-top:12px;background:#34384c}
-.tag{font-size:11px;color:#c4b5fd}
-footer{text-align:center;color:#777;margin:35px 0;font-size:12px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{padding:24px 18px 18px;background:linear-gradient(135deg,#211a3b,#111421);border-bottom:1px solid var(--line)}
+header h1{margin:0;font-size:25px;letter-spacing:1px}
+header p{margin:7px 0 0;color:var(--muted);font-size:13px}
+main{max-width:850px;margin:auto;padding:16px}
+h2{font-size:19px;margin:22px 0 12px}
+h3{font-size:16px;margin:0 0 10px}
+.panel,.project,.scriptbox{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:15px;margin-bottom:13px}
+label{display:block;font-size:13px;color:var(--muted);margin:12px 0 6px}
+input,textarea,select{width:100%;background:#10121d;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:12px;font:inherit;font-size:15px}
+textarea{min-height:105px;resize:vertical;line-height:1.5}
+button{border:0;border-radius:10px;padding:12px 15px;background:var(--accent);color:#171323;font-weight:700;font-size:14px;cursor:pointer;margin:5px 5px 5px 0}
+button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+button.success{background:#1f6b50;color:white}
+button.danger{background:#713b48;color:white}
+button:disabled{opacity:.45}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.small{font-size:12px;color:var(--muted);line-height:1.5}
+.meta{font-size:13px;color:var(--muted);line-height:1.7}
+.project strong{color:var(--accent)}
+.status{color:var(--green);font-size:12px}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+.tabs button{flex:1;min-width:105px}
+.hidden{display:none!important}
+.scriptbox textarea{min-height:360px}
+.cut textarea{min-height:190px}
+hr{border:0;border-top:1px solid var(--line);margin:15px 0}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
+@media(max-width:520px){.row{grid-template-columns:1fr}main{padding:12px}}
 </style>
 </head>
 <body>
 <header>
- <div><div class="logo">MAJONARA <span>STUDIO</span></div>
- <small>SEU ESTÚDIO DE CRIAÇÃO</small></div>
- <span>🎬</span>
+  <h1>MAJONARA STUDIO</h1>
+  <p>Sua central de criação, roteiros e produção de conteúdo.</p>
 </header>
 
-<h1>Seu estúdio de criação.</h1>
-<p>Planeje, produza e aprove seus vídeos.</p>
+<main>
+  <section class="panel">
+    <h2 style="margin-top:0">🎬 Novo projeto</h2>
+    <label>Nome do projeto</label>
+    <input id="name" placeholder="Ex.: GTA VI — Especial de lançamento">
+    <label>Tema e descrição</label>
+    <textarea id="theme" placeholder="Descreva o assunto que será abordado..."></textarea>
+    <div class="row">
+      <div>
+        <label>Duração principal</label>
+        <select id="duration">
+          <option value="5–8 minutos">5–8 minutos</option>
+          <option value="3–5 minutos">3–5 minutos</option>
+          <option value="8–12 minutos">8–12 minutos</option>
+        </select>
+      </div>
+      <div>
+        <label>Narração</label>
+        <select id="voice">
+          <option>Escolher por projeto</option>
+          <option>Minha própria voz</option>
+          <option>Voz de IA</option>
+          <option>Ambas</option>
+          <option>Sem narração</option>
+        </select>
+      </div>
+    </div>
+    <label>Plataformas</label>
+    <input id="platforms" value="YouTube, TikTok, Instagram Reels e YouTube Shorts">
+    <label>Estilo visual</label>
+    <select id="style">
+      <option>Escolher por projeto</option>
+      <option>Documentário cinematográfico</option>
+      <option>Notícias e tendências</option>
+      <option>Humor e entretenimento</option>
+      <option>Games e animações</option>
+      <option>Curiosidades e storytelling</option>
+    </select>
+    <button onclick="createProject()">＋ Criar projeto</button>
+    <p class="small">Os projetos são salvos neste dispositivo. Nenhum conteúdo será publicado automaticamente.</p>
+  </section>
 
-<div class="grid">
- <div class="card"><span>📡</span><b>RADAR</b><small>Tendências</small></div>
- <div class="card"><span>🧠</span><b>ROTEIRISTA</b><small>Roteiros</small></div>
- <div class="card"><span>🎙️</span><b>NARRAÇÃO</b><small>Voz própria e IA</small></div>
- <div class="card"><span>🎨</span><b>ANIMAÇÃO</b><small>Cenas e efeitos</small></div>
-</div>
+  <h2>📁 Meus projetos</h2>
+  <div id="projects"></div>
 
-<button class="primary" onclick="showForm()">＋ NOVO PROJETO</button>
+  <section id="workspace" class="hidden">
+    <div class="panel">
+      <h2 style="margin-top:0">⚙️ Área de produção</h2>
+      <div id="selectedInfo" class="meta"></div>
+      <div class="tabs">
+        <button class="secondary" onclick="showTab('edit')">Editar projeto</button>
+        <button class="secondary" onclick="showTab('script')">Roteiro principal</button>
+        <button class="secondary" onclick="showTab('shorts')">5 cortes curtos</button>
+      </div>
+    </div>
 
-<section id="form" class="hidden">
-<h2>Criar projeto</h2>
-<label>Nome do projeto</label>
-<input id="name" placeholder="Ex.: GTA VI Especial">
+    <div id="tab-edit" class="panel">
+      <h3>Editar informações</h3>
+      <label>Nome</label>
+      <input id="editName">
+      <label>Tema e descrição</label>
+      <textarea id="editTheme"></textarea>
+      <div class="row">
+        <div>
+          <label>Duração</label>
+          <select id="editDuration">
+            <option>5–8 minutos</option>
+            <option>3–5 minutos</option>
+            <option>8–12 minutos</option>
+          </select>
+        </div>
+        <div>
+          <label>Narração</label>
+          <select id="editVoice">
+            <option>Escolher por projeto</option>
+            <option>Minha própria voz</option>
+            <option>Voz de IA</option>
+            <option>Ambas</option>
+            <option>Sem narração</option>
+          </select>
+        </div>
+      </div>
+      <label>Plataformas</label>
+      <input id="editPlatforms">
+      <label>Estilo visual</label>
+      <select id="editStyle">
+        <option>Escolher por projeto</option>
+        <option>Documentário cinematográfico</option>
+        <option>Notícias e tendências</option>
+        <option>Humor e entretenimento</option>
+        <option>Games e animações</option>
+        <option>Curiosidades e storytelling</option>
+      </select>
+      <button onclick="saveProject()">Salvar alterações</button>
+      <button class="secondary" onclick="generateContent()">✨ Gerar roteiros</button>
+    </div>
 
-<label>Tema</label>
-<textarea id="topic" placeholder="Descreva o assunto do vídeo"></textarea>
+    <div id="tab-script" class="panel hidden">
+      <h3>📝 Roteiro principal</h3>
+      <p class="small">Edite livremente o texto. Salve suas alterações antes de aprovar.</p>
+      <button onclick="generateContent()">Gerar roteiro automaticamente</button>
+      <label>Roteiro completo</label>
+      <textarea id="mainScript" style="min-height:430px" placeholder="Seu roteiro aparecerá aqui..."></textarea>
+      <p id="scriptStatus" class="small">Nenhum roteiro gerado ainda.</p>
+      <button onclick="saveMainScript()">Salvar roteiro</button>
+      <button class="success" onclick="approveMainScript()">Aprovar roteiro</button>
+    </div>
 
-<label>Duração principal</label>
-<select id="duration">
-<option>5 a 8 minutos</option>
-<option>1 a 3 minutos</option>
-<option>15 a 60 segundos</option>
-</select>
+    <div id="tab-shorts" class="panel hidden">
+      <h3>📱 Cinco cortes para vídeos curtos</h3>
+      <p class="small">Cada corte pode ser editado e salvo separadamente.</p>
+      <div id="shortsArea"></div>
+      <button class="secondary" onclick="generateContent()">Gerar novamente os cinco cortes</button>
+    </div>
+  </section>
 
-<label>Plataformas</label>
-<select id="platform">
-<option>YouTube + TikTok + Instagram</option>
-<option>Somente YouTube</option>
-<option>Somente TikTok</option>
-<option>Somente Instagram</option>
-</select>
-
-<label>Narração</label>
-<select id="voice">
-<option>Minha voz</option>
-<option>Voz de inteligência artificial</option>
-<option>As duas opções</option>
-</select>
-
-<label>Estilo visual</label>
-<select id="style">
-<option>Anime cinematográfico</option>
-<option>Animação 3D</option>
-<option>Desenho 2D</option>
-<option>Mangá animado</option>
-<option>Motion graphics</option>
-<option>Documentário com imagens</option>
-</select>
-
-<button onclick="saveProject()">SALVAR PROJETO</button>
-<button onclick="hideForm()" style="background:#34384c">CANCELAR</button>
-</section>
-
-<section>
-<h2>Meus projetos</h2>
-<div id="projects"></div>
-</section>
-
-<footer>MAJONARA STUDIO © 2026</footer>
+  <footer>MAJONARA STUDIO · Versão de produção assistida · Seus projetos ficam salvos neste dispositivo.</footer>
+</main>
 
 <script>
-let projects=JSON.parse(localStorage.getItem("majonara_projects")||"[]");
-function showForm(){document.getElementById("form").classList.remove("hidden")}
-function hideForm(){document.getElementById("form").classList.add("hidden")}
+const STORAGE_KEY = "majonara_projects";
+let projects = [];
+let selectedId = null;
+
+function id(){
+  return "p_" + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+}
+function clean(value, fallback=""){
+  return typeof value === "string" && value.trim() ? value.trim() : fallback;
+}
+function migrateProject(p){
+  const oldFormat = clean(p.format, "");
+  return {
+    ...p,
+    id: p.id || id(),
+    name: clean(p.name, "Projeto sem título"),
+    theme: clean(p.theme, "Tema ainda não detalhado."),
+    duration: clean(p.duration, oldFormat || "5–8 minutos"),
+    platforms: clean(p.platforms, "YouTube, TikTok, Instagram Reels e YouTube Shorts"),
+    voice: clean(p.voice, "Escolher por projeto"),
+    style: clean(p.style, "Escolher por projeto"),
+    status: clean(p.status, "Em planejamento"),
+    mainScript: clean(p.mainScript, ""),
+    mainApproved: Boolean(p.mainApproved),
+    shorts: Array.isArray(p.shorts) ? p.shorts : []
+  };
+}
+function load(){
+  try{
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    projects = Array.isArray(saved) ? saved.map(migrateProject) : [];
+    saveAll();
+  }catch(e){
+    projects = [];
+  }
+}
+function saveAll(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+}
+function esc(s){
+  return String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+function createProject(){
+  const name = document.getElementById("name").value.trim();
+  const theme = document.getElementById("theme").value.trim();
+  if(!name || !theme){
+    alert("Preencha o nome e o tema do projeto.");
+    return;
+  }
+  const p = migrateProject({
+    id:id(),
+    name,
+    theme,
+    duration:document.getElementById("duration").value,
+    platforms:document.getElementById("platforms").value,
+    voice:document.getElementById("voice").value,
+    style:document.getElementById("style").value,
+    status:"Em planejamento"
+  });
+  projects.unshift(p);
+  saveAll();
+  renderProjects();
+  selectProject(p.id);
+  document.getElementById("name").value="";
+  document.getElementById("theme").value="";
+}
+function renderProjects(){
+  const box = document.getElementById("projects");
+  if(!projects.length){
+    box.innerHTML='<div class="panel small">Nenhum projeto cadastrado ainda.</div>';
+    return;
+  }
+  box.innerHTML = projects.map(p=>`
+    <div class="project">
+      <strong>PROJETO</strong>
+      <h3>${esc(p.name)}</h3>
+      <div class="meta">${esc(p.theme)}</div>
+      <hr>
+      <div class="meta">
+        Duração: ${esc(p.duration)}<br>
+        Plataformas: ${esc(p.platforms)}<br>
+        Narração: ${esc(p.voice)}<br>
+        Estilo: ${esc(p.style)}<br>
+        Status: <span class="status">${esc(p.status)}</span>
+      </div>
+      <button onclick="selectProject('${p.id}')">Abrir projeto</button>
+      <button class="danger" onclick="deleteProject('${p.id}')">Excluir</button>
+    </div>`).join("");
+}
+function selectProject(projectId){
+  selectedId = projectId;
+  const p = projects.find(x=>x.id===selectedId);
+  if(!p)return;
+  document.getElementById("workspace").classList.remove("hidden");
+  document.getElementById("selectedInfo").textContent = p.name + " · " + p.status;
+  document.getElementById("editName").value=p.name;
+  document.getElementById("editTheme").value=p.theme;
+  document.getElementById("editDuration").value=p.duration;
+  document.getElementById("editVoice").value=p.voice;
+  document.getElementById("editPlatforms").value=p.platforms;
+  document.getElementById("editStyle").value=p.style;
+  document.getElementById("mainScript").value=p.mainScript;
+  document.getElementById("scriptStatus").textContent=p.mainApproved ? "Roteiro aprovado." : (p.mainScript ? "Roteiro salvo, aguardando aprovação." : "Nenhum roteiro gerado ainda.");
+  renderShorts();
+  showTab("edit");
+  document.getElementById("workspace").scrollIntoView({behavior:"smooth"});
+}
+function current(){
+  return projects.find(p=>p.id===selectedId);
+}
 function saveProject(){
-let p={
-id:Date.now(),
-name:document.getElementById("name").value.trim(),
-topic:document.getElementById("topic").value.trim(),
-duration:document.getElementById("duration").value,
-platform:document.getElementById("platform").value,
-voice:document.getElementById("voice").value,
-style:document.getElementById("style").value,
-status:"Aguardando aprovação"
-};
-if(!p.name||!p.topic){alert("Preencha o nome e o tema.");return}
-projects.push(p);
-localStorage.setItem("majonara_projects",JSON.stringify(projects));
-hideForm();render();
+  const p=current();
+  if(!p)return;
+  const name=document.getElementById("editName").value.trim();
+  const theme=document.getElementById("editTheme").value.trim();
+  if(!name || !theme){alert("Nome e tema são obrigatórios.");return;}
+  p.name=name;
+  p.theme=theme;
+  p.duration=document.getElementById("editDuration").value;
+  p.voice=document.getElementById("editVoice").value;
+  p.platforms=document.getElementById("editPlatforms").value.trim();
+  p.style=document.getElementById("editStyle").value;
+  p.status=p.status==="Em planejamento" ? "Em produção" : p.status;
+  saveAll();
+  renderProjects();
+  document.getElementById("selectedInfo").textContent=p.name+" · "+p.status;
+  alert("Projeto salvo com sucesso!");
 }
-function removeProject(id){
-if(!confirm("Excluir este projeto?"))return;
-projects=projects.filter(p=>p.id!==id);
-localStorage.setItem("majonara_projects",JSON.stringify(projects));
-render();
+function deleteProject(projectId){
+  if(!confirm("Tem certeza de que deseja excluir este projeto? Essa ação não pode ser desfeita."))return;
+  projects=projects.filter(p=>p.id!==projectId);
+  saveAll();
+  if(selectedId===projectId){
+    selectedId=null;
+    document.getElementById("workspace").classList.add("hidden");
+  }
+  renderProjects();
 }
-function safe(s){
-let d=document.createElement("div");d.textContent=s;return d.innerHTML;
+function showTab(tab){
+  ["edit","script","shorts"].forEach(t=>{
+    document.getElementById("tab-"+t).classList.toggle("hidden",t!==tab);
+  });
 }
-function render(){
-let area=document.getElementById("projects");
-if(!projects.length){area.innerHTML="<p>Nenhum projeto cadastrado.</p>";return}
-area.innerHTML=projects.map(p=>`
-<div class="project">
-<div class="tag">PROJETO</div>
-<h3>${safe(p.name)}</h3>
-<p>${safe(p.topic)}</p>
-<p class="muted">Duração: ${safe(p.duration)}</p>
-<p class="muted">Plataformas: ${safe(p.platform)}</p>
-<p class="muted">Narração: ${safe(p.voice)}</p>
-<p class="muted">Estilo: ${safe(p.style)}</p>
-<p class="tag">Status: ${safe(p.status||"Em planejamento")}</p>
-<button onclick="removeProject(${p.id})">EXCLUIR</button>
-</div>`).join("");
+function generateContent(){
+  const p=current();
+  if(!p){alert("Abra um projeto primeiro.");return;}
+  const topic=p.theme;
+  const title=p.name;
+  const style=p.style;
+  const duration=p.duration;
+  const script = `PROJETO: ${title}
+TEMA: ${topic}
+DURAÇÃO-ALVO: ${duration}
+ESTILO: ${style}
+
+OBSERVAÇÃO EDITORIAL:
+Este é um roteiro-base automático. Antes de publicar, confira datas, números, declarações, imagens e qualquer informação factual em fontes confiáveis. Não trate hipóteses ou rumores como fatos.
+
+========================================
+ROTEIRO PRINCIPAL — YOUTUBE
+========================================
+
+[00:00 – 00:35] ABERTURA E GANCHO
+
+Imagine acompanhar ${topic}
+
+Mas existe uma pergunta que merece ser respondida: o que realmente importa nesse assunto e por que ele está chamando tanta atenção?
+
+Hoje vamos separar os pontos mais interessantes, explicar o contexto e mostrar o que você precisa observar. Fica comigo até o final, porque há detalhes que podem mudar a forma como você enxerga esse tema.
+
+[00:35 – 01:30] CONTEXTO
+
+Antes de entrar nos detalhes, precisamos entender o cenário.
+
+${topic}
+
+O primeiro ponto é entender de onde vem o interesse por esse assunto. Para fazer isso direito, precisamos distinguir aquilo que já foi confirmado daquilo que ainda depende de confirmação.
+
+Na edição, apresente imagens de contexto, títulos curtos na tela e uma linha do tempo quando houver datas verificadas.
+
+[01:30 – 02:40] PONTO PRINCIPAL
+
+Agora vamos ao ponto central.
+
+O que torna esse tema interessante não é apenas o nome ou a expectativa em torno dele. É a combinação de contexto, detalhes e possibilidades que faz as pessoas quererem acompanhar cada novidade.
+
+Apresente aqui os fatos mais importantes, em ordem lógica. Use exemplos concretos e explique por que cada informação faz diferença para o público.
+
+[02:40 – 03:50] DETALHES QUE MERECEM ATENÇÃO
+
+Existem detalhes que podem passar despercebidos quando olhamos apenas para as manchetes.
+
+Neste trecho, destaque três aspectos:
+1. O que já está confirmado.
+2. O que ainda não foi esclarecido.
+3. O que pode ser mais importante para o público acompanhar daqui para frente.
+
+Use cortes de imagem, aproximações e textos na tela para reforçar cada ponto.
+
+[03:50 – 05:00] ANÁLISE E EXPECTATIVAS
+
+É aqui que vale separar expectativa de realidade.
+
+Com as informações disponíveis, podemos analisar os cenários possíveis, mas não devemos apresentar previsões como certezas.
+
+Explique o que seria um resultado positivo, quais são os desafios e o que ainda precisa acontecer para que as expectativas se confirmem.
+
+[05:00 – 06:15] O QUE AINDA PRECISAMOS DESCOBRIR
+
+Mesmo depois de analisar os principais pontos, ainda existem perguntas em aberto.
+
+Quais novidades podem surgir? O que merece atenção? E quais informações realmente mudariam nossa avaliação?
+
+Apresente as dúvidas mais relevantes sem inventar respostas. Esse trecho também é uma boa oportunidade para convidar o público a acompanhar os próximos conteúdos.
+
+[06:15 – 07:00] CONCLUSÃO E CHAMADA
+
+No fim das contas, ${topic}
+
+Agora quero saber a sua opinião: qual desses pontos mais chamou sua atenção e o que você gostaria de ver explicado em um próximo vídeo?
+
+Deixe seu comentário, acompanhe o MAJONARA STUDIO e compartilhe este vídeo com quem também acompanha esse assunto.
+
+Até a próxima!
+
+========================================
+GUIA DE PRODUÇÃO
+========================================
+
+NARRAÇÃO:
+Tom natural, envolvente e claro. Faça pausas depois das perguntas e destaque as palavras importantes.
+
+IMAGENS:
+Utilize imagens próprias, licenciadas ou materiais cujo uso seja permitido. Não reutilize trailers, músicas ou vídeos protegidos sem autorização.
+
+EDIÇÃO:
+Alterne narração, imagens de apoio, textos curtos na tela e transições discretas.
+
+CHECAGEM:
+Preencher os fatos específicos com fontes verificáveis antes da aprovação final.
+`;
+  p.mainScript=script;
+  p.mainApproved=false;
+  p.status="Roteiros gerados — aguardando revisão";
+  const hooks=[
+    "Você já percebeu o que torna este assunto tão interessante? Hoje vamos mostrar um detalhe que merece atenção.",
+    "Três pontos ajudam a entender melhor "+topic+" — e o último pode surpreender.",
+    "O que já sabemos, o que ainda falta descobrir e por que isso importa? Vamos por partes.",
+    "Muita gente está falando sobre "+topic+". Mas será que todo mundo está olhando para os detalhes certos?",
+    "Agora queremos saber a sua opinião: qual é a maior expectativa em torno de "+topic+"?"
+  ];
+  const bodies=[
+    "Comece com uma pergunta forte. Explique o contexto em poucas frases, apresente um fato confirmado e termine convidando o público a acompanhar a análise completa.",
+    "Apresente três pontos em sequência, com textos curtos na tela. Diferencie informação confirmada de expectativa e finalize com uma pergunta.",
+    "Mostre o contexto, destaque o que ainda não foi esclarecido e explique por que vale acompanhar as próximas atualizações.",
+    "Use uma abertura direta, explique o que costuma ficar de fora das manchetes e conclua com uma observação que gere conversa.",
+    "Faça um resumo rápido dos principais pontos, apresente uma pergunta aberta e convide o público a comentar."
+  ];
+  p.shorts=hooks.map((hook,i)=>({
+    title:"Corte "+(i+1)+" — "+["O grande gancho","Três pontos importantes","O que falta descobrir","Além das manchetes","A pergunta final"][i],
+    hook,
+    body:bodies[i],
+    cta:["Veja a análise completa no canal.","Qual desses pontos chamou mais sua atenção?","O que você acha que vai acontecer?","Você já tinha pensado nisso?","Comente sua opinião e siga o MAJONARA STUDIO."][i],
+    approved:false
+  }));
+  saveAll();
+  selectProject(p.id);
+  showTab("script");
+  alert("Roteiro principal e cinco cortes criados! Revise e complete os fatos antes de aprovar.");
 }
-render();
+function saveMainScript(){
+  const p=current();
+  if(!p)return;
+  p.mainScript=document.getElementById("mainScript").value;
+  p.mainApproved=false;
+  p.status="Roteiro salvo — aguardando aprovação";
+  saveAll();
+  document.getElementById("scriptStatus").textContent="Roteiro salvo. Ainda não aprovado.";
+  document.getElementById("selectedInfo").textContent=p.name+" · "+p.status;
+  renderProjects();
+  alert("Roteiro salvo neste dispositivo.");
+}
+function approveMainScript(){
+  const p=current();
+  if(!p)return;
+  const value=document.getElementById("mainScript").value.trim();
+  if(!value){alert("Gere ou escreva um roteiro antes de aprovar.");return;}
+  if(!confirm("Você revisou o conteúdo e deseja aprovar este roteiro?"))return;
+  p.mainScript=value;
+  p.mainApproved=true;
+  p.status="Roteiro principal aprovado";
+  saveAll();
+  document.getElementById("scriptStatus").textContent="Roteiro principal aprovado.";
+  document.getElementById("selectedInfo").textContent=p.name+" · "+p.status;
+  renderProjects();
+  alert("Roteiro principal aprovado!");
+}
+function renderShorts(){
+  const p=current();
+  const area=document.getElementById("shortsArea");
+  if(!p || !p.shorts.length){
+    area.innerHTML='<p class="small">Ainda não existem cortes. Gere os roteiros para criá-los.</p>';
+    return;
+  }
+  area.innerHTML=p.shorts.map((s,i)=>`
+    <div class="scriptbox cut">
+      <h3>${esc(s.title || "Corte "+(i+1))}</h3>
+      <label>Gancho</label>
+      <textarea id="hook${i}">${esc(s.hook)}</textarea>
+      <label>Desenvolvimento</label>
+      <textarea id="body${i}">${esc(s.body)}</textarea>
+      <label>Chamada para ação</label>
+      <textarea id="cta${i}">${esc(s.cta)}</textarea>
+      <p class="small">${s.approved ? "Aprovado" : "Aguardando revisão"}</p>
+      <button onclick="saveShort(${i})">Salvar corte</button>
+      <button class="success" onclick="approveShort(${i})">Aprovar corte</button>
+    </div>`).join("");
+}
+function saveShort(i){
+  const p=current();
+  if(!p || !p.shorts[i])return;
+  p.shorts[i].hook=document.getElementById("hook"+i).value;
+  p.shorts[i].body=document.getElementById("body"+i).value;
+  p.shorts[i].cta=document.getElementById("cta"+i).value;
+  p.shorts[i].approved=false;
+  saveAll();
+  renderShorts();
+  alert("Corte salvo.");
+}
+function approveShort(i){
+  const p=current();
+  if(!p || !p.shorts[i])return;
+  saveShortSilently(i);
+  if(!p.shorts[i].hook.trim() || !p.shorts[i].body.trim()){
+    alert("Preencha o gancho e o desenvolvimento antes de aprovar.");
+    return;
+  }
+  if(!confirm("Deseja aprovar este corte?"))return;
+  p.shorts[i].approved=true;
+  saveAll();
+  renderShorts();
+  alert("Corte aprovado!");
+}
+function saveShortSilently(i){
+  const p=current();
+  if(!p || !p.shorts[i])return;
+  p.shorts[i].hook=document.getElementById("hook"+i).value;
+  p.shorts[i].body=document.getElementById("body"+i).value;
+  p.shorts[i].cta=document.getElementById("cta"+i).value;
+}
+load();
+renderProjects();
 </script>
 </body>
 </html>
