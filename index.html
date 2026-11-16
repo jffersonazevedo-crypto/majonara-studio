@@ -60,17 +60,14 @@ button:disabled{opacity:.5}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 hr{border:0;border-top:1px solid var(--line);margin:15px 0}
 #notice{padding:11px;border-radius:9px;background:#25233a;color:#ddd5ff;margin-bottom:12px;font-size:13px}
+#backupStatus{color:var(--green);margin-top:8px}
 footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
-.backup-buttons{display:flex;gap:8px;flex-wrap:wrap}
-.backup-buttons button{flex:1;min-width:140px}
-#backupStatus{margin-top:8px;overflow-wrap:anywhere}
 @media(max-width:520px){
   .row{grid-template-columns:1fr}
   main{padding:12px}
 }
 </style>
 </head>
-
 <body>
 <header>
   <h1>MAJONARA STUDIO</h1>
@@ -82,40 +79,13 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
     Seus projetos são salvos neste dispositivo. Nenhum conteúdo será publicado automaticamente.
   </div>
 
-  <!-- NOVA ÁREA DE BACKUP -->
-  <section class="panel" id="backupPanel">
-    <h2 style="margin-top:0">🛡️ Backup dos projetos</h2>
-    <p class="small">
-      Salve uma cópia dos seus projetos ou restaure um backup anterior.
-      O arquivo fica no seu dispositivo e não é enviado para servidores.
-    </p>
-
-    <div class="backup-buttons">
-      <button data-action="export-backup">⬇️ Exportar meus projetos</button>
-      <button class="secondary" data-action="choose-backup">⬆️ Importar backup</button>
-    </div>
-
-    <input
-      id="backupFile"
-      type="file"
-      accept=".json,application/json"
-      class="hidden"
-    >
-
-    <p id="backupStatus" class="small" aria-live="polite">
-      Verificando projetos salvos...
-    </p>
-  </section>
-
   <section class="panel">
     <h2 style="margin-top:0">🎬 Novo projeto</h2>
 
     <label>Nome do projeto</label>
     <input id="name" placeholder="Ex.: GTA VI — Especial de lançamento">
-
     <label>Tema e descrição</label>
     <textarea id="theme" placeholder="Descreva o assunto do projeto..."></textarea>
-
     <div class="row">
       <div>
         <label>Duração principal</label>
@@ -136,7 +106,6 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
         </select>
       </div>
     </div>
-
     <label>Plataformas</label>
     <input id="platforms" value="YouTube, TikTok, Instagram Reels e YouTube Shorts">
 
@@ -149,18 +118,33 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
       <option>Games e animações</option>
       <option>Curiosidades e storytelling</option>
     </select>
-
     <button data-action="create">＋ Criar projeto</button>
   </section>
 
   <h2>📁 Meus projetos</h2>
   <div id="projects"></div>
 
+  <!-- BACKUP INTEGRADO -->
+  <section class="panel" id="backupPanel">
+    <h2 style="margin-top:0">🛡️ Backup dos projetos</h2>
+    <p class="small">
+      Exporte seus projetos para um arquivo de segurança ou importe um backup anterior.
+      Guarde o arquivo em um local seguro.
+    </p>
+    <button data-action="export-backup">⬇️ Exportar meus projetos</button>
+    <button class="secondary" data-action="choose-backup">⬆️ Importar backup</button>
+    <input id="backupFile" type="file" accept=".json,application/json" class="hidden">
+    <p id="backupStatus" class="small">Verificando projetos salvos...</p>
+    <p class="small">
+      A exportação cria um arquivo JSON no seu dispositivo. A importação pode adicionar
+      projetos ao que já existe ou substituir a lista atual.
+    </p>
+  </section>
+
   <section id="workspace" class="hidden">
     <div class="panel">
       <h2 style="margin-top:0">⚙️ Área de produção</h2>
       <div id="selectedInfo" class="meta"></div>
-
       <div class="tabs">
         <button class="secondary" data-action="tab" data-tab="edit">Editar projeto</button>
         <button class="secondary" data-action="tab" data-tab="script">Roteiro principal</button>
@@ -173,10 +157,8 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
 
       <label>Nome</label>
       <input id="editName">
-
       <label>Tema e descrição</label>
       <textarea id="editTheme"></textarea>
-
       <div class="row">
         <div>
           <label>Duração</label>
@@ -197,7 +179,6 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
           </select>
         </div>
       </div>
-
       <label>Plataformas</label>
       <input id="editPlatforms">
 
@@ -210,7 +191,6 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
         <option>Games e animações</option>
         <option>Curiosidades e storytelling</option>
       </select>
-
       <button data-action="save-project">Salvar alterações</button>
       <button class="secondary" data-action="generate">✨ Gerar roteiros</button>
     </div>
@@ -220,7 +200,6 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
       <p class="small">Edite o roteiro, salve e revise os fatos antes de aprovar.</p>
 
       <button data-action="generate">Gerar roteiro automaticamente</button>
-
       <label>Roteiro completo</label>
       <textarea id="mainScript" placeholder="Seu roteiro aparecerá aqui..."></textarea>
 
@@ -229,7 +208,6 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
       <button data-action="save-script">Salvar roteiro</button>
       <button class="success" data-action="approve-script">Aprovar roteiro</button>
     </div>
-
     <div id="tab-shorts" class="panel hidden">
       <h3>📱 Cinco cortes para vídeos curtos</h3>
       <p class="small">Edite cada corte e aprove individualmente.</p>
@@ -239,7 +217,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
   </section>
 
   <footer>
-    MAJONARA STUDIO · Produção assistida · Versão com backup
+    MAJONARA STUDIO · Produção assistida · Versão inicial
   </footer>
 </main>
 
@@ -265,7 +243,6 @@ function clean(value,fallback=""){
 
 function migrateProject(p){
   p = p && typeof p === "object" ? p : {};
-
   const durations = ["5–8 minutos","3–5 minutos","8–12 minutos"];
   const voices = [
     "Escolher por projeto","Minha própria voz",
@@ -276,7 +253,6 @@ function migrateProject(p){
     "Notícias e tendências","Humor e entretenimento",
     "Games e animações","Curiosidades e storytelling"
   ];
-
   return {
     ...p,
     id: clean(p.id,makeId()),
@@ -317,6 +293,159 @@ function saveAll(){
   }
 }
 
+/* FUNÇÕES DE BACKUP */
+function updateBackupStatus(){
+  const status=$("backupStatus");
+  if(!status)return;
+
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    const data=raw ? JSON.parse(raw) : [];
+    const count=Array.isArray(data) ? data.length : 0;
+    status.textContent=count===1
+      ? "1 projeto salvo neste dispositivo."
+      : count+" projetos salvos neste dispositivo.";
+  }catch(error){
+    status.textContent="Não foi possível verificar o armazenamento.";
+  }
+}
+
+function exportBackup(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    const data=raw ? JSON.parse(raw) : [];
+
+    if(!Array.isArray(data) || data.length===0){
+      alert("Não há projetos para exportar neste armazenamento.");
+      return;
+    }
+
+    const payload={
+      app:"MAJONARA STUDIO",
+      backupVersion:1,
+      createdAt:new Date().toISOString(),
+      storageKey:STORAGE_KEY,
+      projects:data
+    };
+
+    const blob=new Blob(
+      [JSON.stringify(payload,null,2)],
+      {type:"application/json"}
+    );
+
+    const url=URL.createObjectURL(blob);
+    const link=document.createElement("a");
+    const date=new Date().toISOString().slice(0,10);
+
+    link.href=url;
+    link.download="majonara-studio-backup-"+date+".json";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+    alert("Backup exportado. Guarde o arquivo em um local seguro.");
+  }catch(error){
+    alert("Não foi possível exportar o backup: "+error.message);
+  }
+}
+
+function chooseBackupFile(){
+  $("backupFile").click();
+}
+
+function importBackupFile(file){
+  if(!file)return;
+
+  const reader=new FileReader();
+
+  reader.onload=function(){
+    try{
+      const parsed=JSON.parse(reader.result);
+      const incoming=Array.isArray(parsed)
+        ? parsed
+        : parsed && Array.isArray(parsed.projects)
+          ? parsed.projects
+          : null;
+
+      if(!incoming){
+        alert("Este arquivo não parece ser um backup válido do MAJONARA STUDIO.");
+        return;
+      }
+
+      if(incoming.length===0){
+        alert("O arquivo de backup não contém projetos.");
+        return;
+      }
+
+      const imported=incoming.map(migrateProject);
+      const choice=prompt(
+        "Como deseja importar?\n\nDigite ADICIONAR para juntar aos projetos atuais.\nDigite SUBSTITUIR para trocar a lista atual pelo backup."
+      );
+
+      if(choice===null)return;
+
+      const mode=choice.trim().toUpperCase();
+
+      if(mode!=="ADICIONAR" && mode!=="SUBSTITUIR"){
+        alert("Opção inválida. Digite ADICIONAR ou SUBSTITUIR.");
+        return;
+      }
+
+      let nextProjects;
+
+      if(mode==="ADICIONAR"){
+        nextProjects=projects.slice();
+        const ids=new Set(nextProjects.map(p=>p.id));
+
+        imported.forEach(p=>{
+          if(ids.has(p.id)){
+            p.id=makeId();
+          }
+          ids.add(p.id);
+          nextProjects.push(p);
+        });
+      }else{
+        const confirmed=confirm(
+          "ATENÇÃO: substituirá a lista de projetos atual neste dispositivo. Faça um backup antes. Deseja continuar?"
+        );
+        if(!confirmed)return;
+        nextProjects=imported;
+      }
+
+      const previous=projects;
+      projects=nextProjects;
+
+      if(!saveAll()){
+        projects=previous;
+        return;
+      }
+
+      selectedId=null;
+      $("workspace").classList.add("hidden");
+      renderProjects();
+      updateBackupStatus();
+
+      alert(
+        mode==="ADICIONAR"
+          ? "Backup importado. Os projetos foram adicionados à sua lista."
+          : "Backup importado. A lista atual foi substituída."
+      );
+    }catch(error){
+      alert("Erro ao ler o backup: "+error.message);
+    }finally{
+      $("backupFile").value="";
+    }
+  };
+
+  reader.onerror=function(){
+    alert("Não foi possível ler o arquivo selecionado.");
+    $("backupFile").value="";
+  };
+
+  reader.readAsText(file);
+}
+
 function escapeHTML(value){
   return String(value ?? "").replace(/[&<>"']/g,c=>({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
@@ -335,7 +464,6 @@ function renderProjects(){
     updateBackupStatus();
     return;
   }
-
   box.innerHTML=projects.map(p=>`
     <div class="project">
       <strong>PROJETO</strong>
@@ -353,7 +481,6 @@ function renderProjects(){
       <button class="danger" data-action="delete" data-id="${escapeHTML(p.id)}">Excluir</button>
     </div>
   `).join("");
-
   updateBackupStatus();
 }
 
@@ -383,7 +510,6 @@ function createProject(){
     projects.shift();
     return;
   }
-
   $("name").value="";
   $("theme").value="";
   renderProjects();
@@ -402,7 +528,6 @@ function openProject(projectId){
 
   $("workspace").classList.remove("hidden");
   $("selectedInfo").textContent=p.name+" · "+p.status;
-
   $("editName").value=p.name;
   $("editTheme").value=p.theme;
   $("editDuration").value=p.duration;
@@ -420,7 +545,6 @@ function openProject(projectId){
 
   renderShorts();
   showTab("edit");
-
   $("workspace").scrollIntoView({
     behavior:"auto",
     block:"start"
@@ -463,7 +587,7 @@ function saveProject(){
 function deleteProject(projectId){
   if(!confirm("Deseja excluir este projeto? Essa ação não pode ser desfeita.")) return;
 
-  const previous=projects;
+  const previous=projects.slice();
   projects=projects.filter(p=>p.id!==projectId);
 
   if(!saveAll()){
@@ -505,7 +629,6 @@ ROTEIRO PRINCIPAL — YOUTUBE
 ========================================
 
 [00:00 – 00:35] ABERTURA E GANCHO
-
 Imagine descobrir um detalhe que muda completamente a maneira de enxergar este assunto.
 
 Hoje vamos falar sobre ${topic}
@@ -519,7 +642,6 @@ Fique até o final e depois conte sua opinião nos comentários.
 Para entender esse assunto, primeiro precisamos olhar para o cenário.
 
 ${topic}
-
 O que fez esse tema ganhar atenção? Quais são as informações confirmadas? E o que ainda está sendo discutido?
 
 Neste momento, apresente o contexto com informações verificadas, imagens de apoio e uma linha do tempo, caso existam datas importantes.
@@ -529,7 +651,6 @@ Neste momento, apresente o contexto com informações verificadas, imagens de ap
 Vamos começar pelo ponto mais importante.
 
 Explique aqui o primeiro fato confirmado e por que ele interessa ao público.
-
 Não basta apresentar uma informação: mostre o que ela significa, como se conecta ao tema e quais consequências pode ter.
 
 [02:40 – 03:50] DETALHES QUE MERECEM ATENÇÃO
@@ -557,7 +678,6 @@ Separe fatos de opiniões e deixe claro quando estiver apresentando uma hipótes
 Mesmo depois de analisar os principais pontos, ainda existem perguntas em aberto.
 
 O que falta descobrir? Quais novidades podem mudar nossa avaliação? E o que o público deveria observar?
-
 Apresente as dúvidas mais relevantes sem inventar respostas.
 
 [06:15 – 07:00] ENCERRAMENTO
@@ -573,7 +693,6 @@ Até a próxima!
 ========================================
 GUIA DE PRODUÇÃO
 ========================================
-
 NARRAÇÃO:
 Tom natural, envolvente e claro. Faça pausas nas perguntas e destaque palavras importantes.
 
@@ -594,7 +713,6 @@ Complete os trechos que precisam de fatos específicos com fontes verificáveis 
     "Além das manchetes",
     "A pergunta final"
   ];
-
   const hooks=[
     "Você já percebeu o que torna este assunto tão interessante? Hoje vamos mostrar um detalhe que merece atenção.",
     "Três pontos ajudam a entender melhor este tema. E o último merece atenção.",
@@ -602,7 +720,6 @@ Complete os trechos que precisam de fatos específicos com fontes verificáveis 
     "Muita gente está falando sobre este assunto. Mas será que estamos olhando para os detalhes certos?",
     "Agora queremos saber sua opinião: qual é a maior expectativa em torno deste tema?"
   ];
-
   const bodies=[
     "Apresente o contexto em poucas frases, explique um fato confirmado e mostre por que ele importa. Use imagens de apoio e termine convidando o público a acompanhar a análise completa.",
     "Apresente três pontos em sequência, com textos curtos na tela. Diferencie informação confirmada de expectativa e finalize com uma pergunta.",
@@ -610,7 +727,6 @@ Complete os trechos que precisam de fatos específicos com fontes verificáveis 
     "Explique o que costuma ficar de fora das manchetes. Traga um exemplo concreto e conclua com uma observação que gere conversa.",
     "Faça um resumo dos principais pontos, apresente uma pergunta aberta e convide o público a comentar."
   ];
-
   const ctas=[
     "Veja a análise completa no canal.",
     "Qual desses pontos chamou mais sua atenção?",
@@ -630,8 +746,7 @@ Complete os trechos que precisam de fatos específicos com fontes verificáveis 
   p.mainApproved=false;
   p.status="Roteiros gerados — aguardando revisão";
 
-  if(!saveAll()) return;
-
+  if(!saveAll())return;
   openProject(p.id);
   showTab("script");
   alert("Roteiro principal e cinco cortes criados. Revise os fatos antes de aprovar.");
@@ -644,12 +759,7 @@ function saveMainScript(){
   const value=$("mainScript").value.trim();
   if(!value){alert("Não há roteiro para salvar.");return;}
 
-  const previous={
-    mainScript:p.mainScript,
-    mainApproved:p.mainApproved,
-    status:p.status
-  };
-
+  const previous={...p};
   p.mainScript=value;
   p.mainApproved=false;
   p.status="Roteiro salvo — aguardando aprovação";
@@ -674,12 +784,7 @@ function approveMainScript(){
 
   if(!confirm("Você revisou o roteiro e deseja aprová-lo?"))return;
 
-  const previous={
-    mainScript:p.mainScript,
-    mainApproved:p.mainApproved,
-    status:p.status
-  };
-
+  const previous={...p};
   p.mainScript=value;
   p.mainApproved=true;
   p.status="Roteiro principal aprovado";
@@ -716,7 +821,6 @@ function renderShorts(){
 
       <label>Chamada para ação</label>
       <textarea data-short="${i}" data-field="cta">${escapeHTML(s.cta)}</textarea>
-
       <p class="small">${s.approved ? "Aprovado" : "Aguardando revisão"}</p>
 
       <button data-action="save-short" data-index="${i}">Salvar corte</button>
@@ -734,18 +838,14 @@ function readShort(i){
   fields.forEach(el=>{
     p.shorts[i][el.dataset.field]=el.value;
   });
-
   return true;
 }
 
 function saveShort(i){
   const p=current();
-  if(!p || !p.shorts[i])return;
-
-  const previous=JSON.stringify(p.shorts[i]);
-
   if(!readShort(i))return;
 
+  const previous=JSON.stringify(p.shorts[i]);
   p.shorts[i].approved=false;
 
   if(!saveAll()){
@@ -759,10 +859,6 @@ function saveShort(i){
 
 function approveShort(i){
   const p=current();
-  if(!p || !p.shorts[i])return;
-
-  const previous=JSON.stringify(p.shorts[i]);
-
   if(!readShort(i))return;
 
   const s=p.shorts[i];
@@ -774,10 +870,11 @@ function approveShort(i){
 
   if(!confirm("Deseja aprovar este corte?"))return;
 
+  const previous=s.approved;
   s.approved=true;
 
   if(!saveAll()){
-    p.shorts[i]=JSON.parse(previous);
+    s.approved=previous;
     return;
   }
 
@@ -785,196 +882,7 @@ function approveShort(i){
   alert("Corte aprovado.");
 }
 
-/* =========================================
-   SISTEMA DE BACKUP E RESTAURAÇÃO
-   ========================================= */
-
-function updateBackupStatus(){
-  const status=$("backupStatus");
-  if(!status)return;
-
-  try{
-    const raw=localStorage.getItem(STORAGE_KEY);
-    const data=raw?JSON.parse(raw):[];
-
-    status.textContent=
-      "Projetos encontrados neste aplicativo: "+
-      (Array.isArray(data)?data.length:0)+".";
-  }catch(error){
-    status.textContent=
-      "Não foi possível verificar os projetos: "+error.message;
-  }
-}
-
-function exportBackup(){
-  let data;
-
-  try{
-    const raw=localStorage.getItem(STORAGE_KEY);
-    data=raw?JSON.parse(raw):[];
-
-    if(!Array.isArray(data)){
-      throw new Error("Formato de armazenamento inválido.");
-    }
-  }catch(error){
-    alert("Erro ao preparar o backup: "+error.message);
-    return;
-  }
-
-  if(data.length===0){
-    alert("Nenhum projeto foi encontrado neste aplicativo. Nenhum backup vazio foi criado.");
-    updateBackupStatus();
-    return;
-  }
-
-  const backup={
-    app:"MAJONARA STUDIO",
-    backupVersion:1,
-    createdAt:new Date().toISOString(),
-    storageKey:STORAGE_KEY,
-    projects:data
-  };
-
-  const blob=new Blob(
-    [JSON.stringify(backup,null,2)],
-    {type:"application/json"}
-  );
-
-  const url=URL.createObjectURL(blob);
-  const link=document.createElement("a");
-
-  const date=new Date().toISOString().replace(/[:.]/g,"-");
-
-  link.href=url;
-  link.download="majonara-studio-backup-"+date+".json";
-
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-
-  setTimeout(()=>URL.revokeObjectURL(url),3000);
-
-  $("backupStatus").textContent=
-    "Backup preparado com "+data.length+
-    " projeto(s). Verifique se o arquivo foi salvo em Arquivos/Downloads.";
-}
-
-function chooseBackup(){
-  $("backupFile").click();
-}
-
-function importBackupFile(file){
-  if(!file)return;
-
-  const reader=new FileReader();
-
-  reader.onload=function(){
-    let parsed;
-
-    try{
-      parsed=JSON.parse(String(reader.result||""));
-    }catch(error){
-      alert("Este arquivo não é um JSON válido.");
-      return;
-    }
-
-    let incoming=Array.isArray(parsed)
-      ? parsed
-      : parsed && Array.isArray(parsed.projects)
-        ? parsed.projects
-        : null;
-
-    if(!incoming){
-      alert("O arquivo não contém uma lista de projetos reconhecida.");
-      return;
-    }
-
-    if(incoming.length===0){
-      alert("O backup está vazio. Nenhum projeto foi alterado.");
-      return;
-    }
-
-    const imported=incoming.map(migrateProject);
-
-    const choice=prompt(
-      "Backup encontrado com "+imported.length+
-      " projeto(s).\n\n"+
-      "Digite ADICIONAR para mesclar com seus projetos atuais.\n\n"+
-      "Digite SUBSTITUIR para trocar a lista atual pelo backup.\n\n"+
-      "Qualquer outra resposta cancela."
-    );
-
-    if(choice===null)return;
-
-    const mode=choice.trim().toUpperCase();
-
-    if(mode!=="ADICIONAR" && mode!=="SUBSTITUIR"){
-      alert("Importação cancelada. Seus projetos não foram alterados.");
-      return;
-    }
-
-    if(mode==="SUBSTITUIR"){
-      const confirmed=confirm(
-        "ATENÇÃO!\n\n"+
-        "Esta operação substituirá todos os projetos atuais pelos projetos do backup.\n\n"+
-        "Recomendamos exportar um backup dos projetos atuais antes de continuar.\n\n"+
-        "Deseja realmente substituir?"
-      );
-
-      if(!confirmed)return;
-    }
-
-    const previous=projects;
-    let next;
-
-    if(mode==="SUBSTITUIR"){
-      next=imported;
-    }else{
-      const ids=new Set(projects.map(p=>String(p.id)));
-      next=projects.slice();
-
-      imported.forEach(p=>{
-        if(ids.has(String(p.id)))return;
-
-        ids.add(String(p.id));
-        next.push(p);
-      });
-
-      if(next.length===projects.length){
-        alert("Todos os projetos do backup já existem aqui. Nada foi alterado.");
-        return;
-      }
-    }
-
-    projects=next;
-
-    if(!saveAll()){
-      projects=previous;
-      alert("Não foi possível salvar o backup. A lista anterior foi preservada.");
-      return;
-    }
-
-    selectedId=null;
-    $("workspace").classList.add("hidden");
-    renderProjects();
-    updateBackupStatus();
-
-    alert(
-      mode==="SUBSTITUIR"
-        ? "Backup restaurado! "+projects.length+" projeto(s) carregado(s)."
-        : "Backup importado! Agora existem "+projects.length+" projeto(s) no aplicativo."
-    );
-  };
-
-  reader.onerror=function(){
-    alert("Não foi possível ler o arquivo selecionado.");
-  };
-
-  reader.readAsText(file);
-}
-
-/* EVENTOS DOS BOTÕES */
-
+/* Eventos centralizados */
 document.addEventListener("click",function(event){
   const button=event.target.closest("button[data-action]");
   if(!button)return;
@@ -993,25 +901,17 @@ document.addEventListener("click",function(event){
     else if(action==="approve-short")approveShort(Number(button.dataset.index));
     else if(action==="tab")showTab(button.dataset.tab);
     else if(action==="export-backup")exportBackup();
-    else if(action==="choose-backup")chooseBackup();
-
+    else if(action==="choose-backup")chooseBackupFile();
   }catch(error){
     console.error(error);
     alert("Ocorreu um erro: "+error.message);
   }
 });
 
-$("backupFile").addEventListener("change",function(){
-  const file=this.files && this.files[0];
-
-  if(file){
-    importBackupFile(file);
-  }
-
-  this.value="";
+$("backupFile").addEventListener("change",function(event){
+  const file=event.target.files && event.target.files[0];
+  if(file)importBackupFile(file);
 });
-
-/* INICIALIZAÇÃO */
 
 loadProjects();
 renderProjects();
