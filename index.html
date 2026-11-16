@@ -61,6 +61,9 @@ button:disabled{opacity:.5}
 hr{border:0;border-top:1px solid var(--line);margin:15px 0}
 #notice{padding:11px;border-radius:9px;background:#25233a;color:#ddd5ff;margin-bottom:12px;font-size:13px}
 footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
+.backup-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.backup-buttons button{flex:1;min-width:140px}
+#backupStatus{margin-top:8px;overflow-wrap:anywhere}
 @media(max-width:520px){
   .row{grid-template-columns:1fr}
   main{padding:12px}
@@ -78,6 +81,31 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
   <div id="notice">
     Seus projetos são salvos neste dispositivo. Nenhum conteúdo será publicado automaticamente.
   </div>
+
+  <!-- NOVA ÁREA DE BACKUP -->
+  <section class="panel" id="backupPanel">
+    <h2 style="margin-top:0">🛡️ Backup dos projetos</h2>
+    <p class="small">
+      Salve uma cópia dos seus projetos ou restaure um backup anterior.
+      O arquivo fica no seu dispositivo e não é enviado para servidores.
+    </p>
+
+    <div class="backup-buttons">
+      <button data-action="export-backup">⬇️ Exportar meus projetos</button>
+      <button class="secondary" data-action="choose-backup">⬆️ Importar backup</button>
+    </div>
+
+    <input
+      id="backupFile"
+      type="file"
+      accept=".json,application/json"
+      class="hidden"
+    >
+
+    <p id="backupStatus" class="small" aria-live="polite">
+      Verificando projetos salvos...
+    </p>
+  </section>
 
   <section class="panel">
     <h2 style="margin-top:0">🎬 Novo projeto</h2>
@@ -211,7 +239,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
   </section>
 
   <footer>
-    MAJONARA STUDIO · Produção assistida · Versão inicial
+    MAJONARA STUDIO · Produção assistida · Versão com backup
   </footer>
 </main>
 
@@ -281,6 +309,7 @@ function loadProjects(){
 function saveAll(){
   try{
     localStorage.setItem(STORAGE_KEY,JSON.stringify(projects));
+    updateBackupStatus();
     return true;
   }catch(error){
     alert("Não foi possível salvar. Verifique o espaço disponível no navegador.");
@@ -303,6 +332,7 @@ function renderProjects(){
 
   if(!projects.length){
     box.innerHTML='<div class="panel small">Nenhum projeto cadastrado.</div>';
+    updateBackupStatus();
     return;
   }
 
@@ -323,6 +353,8 @@ function renderProjects(){
       <button class="danger" data-action="delete" data-id="${escapeHTML(p.id)}">Excluir</button>
     </div>
   `).join("");
+
+  updateBackupStatus();
 }
 
 function createProject(){
@@ -407,6 +439,8 @@ function saveProject(){
     return;
   }
 
+  const previous={...p};
+
   p.name=name;
   p.theme=theme;
   p.duration=$("editDuration").value;
@@ -416,7 +450,10 @@ function saveProject(){
 
   if(p.status==="Em planejamento") p.status="Em produção";
 
-  if(!saveAll()) return;
+  if(!saveAll()){
+    Object.assign(p,previous);
+    return;
+  }
 
   $("selectedInfo").textContent=p.name+" · "+p.status;
   renderProjects();
@@ -426,9 +463,13 @@ function saveProject(){
 function deleteProject(projectId){
   if(!confirm("Deseja excluir este projeto? Essa ação não pode ser desfeita.")) return;
 
+  const previous=projects;
   projects=projects.filter(p=>p.id!==projectId);
 
-  if(!saveAll()) return;
+  if(!saveAll()){
+    projects=previous;
+    return;
+  }
 
   if(selectedId===projectId){
     selectedId=null;
@@ -603,11 +644,20 @@ function saveMainScript(){
   const value=$("mainScript").value.trim();
   if(!value){alert("Não há roteiro para salvar.");return;}
 
+  const previous={
+    mainScript:p.mainScript,
+    mainApproved:p.mainApproved,
+    status:p.status
+  };
+
   p.mainScript=value;
   p.mainApproved=false;
   p.status="Roteiro salvo — aguardando aprovação";
 
-  if(!saveAll())return;
+  if(!saveAll()){
+    Object.assign(p,previous);
+    return;
+  }
 
   $("scriptStatus").textContent="Roteiro salvo. Ainda não aprovado.";
   $("selectedInfo").textContent=p.name+" · "+p.status;
@@ -624,11 +674,20 @@ function approveMainScript(){
 
   if(!confirm("Você revisou o roteiro e deseja aprová-lo?"))return;
 
+  const previous={
+    mainScript:p.mainScript,
+    mainApproved:p.mainApproved,
+    status:p.status
+  };
+
   p.mainScript=value;
   p.mainApproved=true;
   p.status="Roteiro principal aprovado";
 
-  if(!saveAll())return;
+  if(!saveAll()){
+    Object.assign(p,previous);
+    return;
+  }
 
   $("scriptStatus").textContent="Roteiro principal aprovado.";
   $("selectedInfo").textContent=p.name+" · "+p.status;
@@ -681,11 +740,18 @@ function readShort(i){
 
 function saveShort(i){
   const p=current();
+  if(!p || !p.shorts[i])return;
+
+  const previous=JSON.stringify(p.shorts[i]);
+
   if(!readShort(i))return;
 
   p.shorts[i].approved=false;
 
-  if(!saveAll())return;
+  if(!saveAll()){
+    p.shorts[i]=JSON.parse(previous);
+    return;
+  }
 
   renderShorts();
   alert("Corte salvo.");
@@ -693,6 +759,10 @@ function saveShort(i){
 
 function approveShort(i){
   const p=current();
+  if(!p || !p.shorts[i])return;
+
+  const previous=JSON.stringify(p.shorts[i]);
+
   if(!readShort(i))return;
 
   const s=p.shorts[i];
@@ -706,14 +776,205 @@ function approveShort(i){
 
   s.approved=true;
 
-  if(!saveAll())return;
+  if(!saveAll()){
+    p.shorts[i]=JSON.parse(previous);
+    return;
+  }
 
   renderShorts();
   alert("Corte aprovado.");
 }
 
-/* Eventos centralizados: os botões não dependem de funções
-   globais nem de atributos onclick. */
+/* =========================================
+   SISTEMA DE BACKUP E RESTAURAÇÃO
+   ========================================= */
+
+function updateBackupStatus(){
+  const status=$("backupStatus");
+  if(!status)return;
+
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    const data=raw?JSON.parse(raw):[];
+
+    status.textContent=
+      "Projetos encontrados neste aplicativo: "+
+      (Array.isArray(data)?data.length:0)+".";
+  }catch(error){
+    status.textContent=
+      "Não foi possível verificar os projetos: "+error.message;
+  }
+}
+
+function exportBackup(){
+  let data;
+
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    data=raw?JSON.parse(raw):[];
+
+    if(!Array.isArray(data)){
+      throw new Error("Formato de armazenamento inválido.");
+    }
+  }catch(error){
+    alert("Erro ao preparar o backup: "+error.message);
+    return;
+  }
+
+  if(data.length===0){
+    alert("Nenhum projeto foi encontrado neste aplicativo. Nenhum backup vazio foi criado.");
+    updateBackupStatus();
+    return;
+  }
+
+  const backup={
+    app:"MAJONARA STUDIO",
+    backupVersion:1,
+    createdAt:new Date().toISOString(),
+    storageKey:STORAGE_KEY,
+    projects:data
+  };
+
+  const blob=new Blob(
+    [JSON.stringify(backup,null,2)],
+    {type:"application/json"}
+  );
+
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+
+  const date=new Date().toISOString().replace(/[:.]/g,"-");
+
+  link.href=url;
+  link.download="majonara-studio-backup-"+date+".json";
+
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  setTimeout(()=>URL.revokeObjectURL(url),3000);
+
+  $("backupStatus").textContent=
+    "Backup preparado com "+data.length+
+    " projeto(s). Verifique se o arquivo foi salvo em Arquivos/Downloads.";
+}
+
+function chooseBackup(){
+  $("backupFile").click();
+}
+
+function importBackupFile(file){
+  if(!file)return;
+
+  const reader=new FileReader();
+
+  reader.onload=function(){
+    let parsed;
+
+    try{
+      parsed=JSON.parse(String(reader.result||""));
+    }catch(error){
+      alert("Este arquivo não é um JSON válido.");
+      return;
+    }
+
+    let incoming=Array.isArray(parsed)
+      ? parsed
+      : parsed && Array.isArray(parsed.projects)
+        ? parsed.projects
+        : null;
+
+    if(!incoming){
+      alert("O arquivo não contém uma lista de projetos reconhecida.");
+      return;
+    }
+
+    if(incoming.length===0){
+      alert("O backup está vazio. Nenhum projeto foi alterado.");
+      return;
+    }
+
+    const imported=incoming.map(migrateProject);
+
+    const choice=prompt(
+      "Backup encontrado com "+imported.length+
+      " projeto(s).\n\n"+
+      "Digite ADICIONAR para mesclar com seus projetos atuais.\n\n"+
+      "Digite SUBSTITUIR para trocar a lista atual pelo backup.\n\n"+
+      "Qualquer outra resposta cancela."
+    );
+
+    if(choice===null)return;
+
+    const mode=choice.trim().toUpperCase();
+
+    if(mode!=="ADICIONAR" && mode!=="SUBSTITUIR"){
+      alert("Importação cancelada. Seus projetos não foram alterados.");
+      return;
+    }
+
+    if(mode==="SUBSTITUIR"){
+      const confirmed=confirm(
+        "ATENÇÃO!\n\n"+
+        "Esta operação substituirá todos os projetos atuais pelos projetos do backup.\n\n"+
+        "Recomendamos exportar um backup dos projetos atuais antes de continuar.\n\n"+
+        "Deseja realmente substituir?"
+      );
+
+      if(!confirmed)return;
+    }
+
+    const previous=projects;
+    let next;
+
+    if(mode==="SUBSTITUIR"){
+      next=imported;
+    }else{
+      const ids=new Set(projects.map(p=>String(p.id)));
+      next=projects.slice();
+
+      imported.forEach(p=>{
+        if(ids.has(String(p.id)))return;
+
+        ids.add(String(p.id));
+        next.push(p);
+      });
+
+      if(next.length===projects.length){
+        alert("Todos os projetos do backup já existem aqui. Nada foi alterado.");
+        return;
+      }
+    }
+
+    projects=next;
+
+    if(!saveAll()){
+      projects=previous;
+      alert("Não foi possível salvar o backup. A lista anterior foi preservada.");
+      return;
+    }
+
+    selectedId=null;
+    $("workspace").classList.add("hidden");
+    renderProjects();
+    updateBackupStatus();
+
+    alert(
+      mode==="SUBSTITUIR"
+        ? "Backup restaurado! "+projects.length+" projeto(s) carregado(s)."
+        : "Backup importado! Agora existem "+projects.length+" projeto(s) no aplicativo."
+    );
+  };
+
+  reader.onerror=function(){
+    alert("Não foi possível ler o arquivo selecionado.");
+  };
+
+  reader.readAsText(file);
+}
+
+/* EVENTOS DOS BOTÕES */
+
 document.addEventListener("click",function(event){
   const button=event.target.closest("button[data-action]");
   if(!button)return;
@@ -731,14 +992,30 @@ document.addEventListener("click",function(event){
     else if(action==="save-short")saveShort(Number(button.dataset.index));
     else if(action==="approve-short")approveShort(Number(button.dataset.index));
     else if(action==="tab")showTab(button.dataset.tab);
+    else if(action==="export-backup")exportBackup();
+    else if(action==="choose-backup")chooseBackup();
+
   }catch(error){
     console.error(error);
     alert("Ocorreu um erro: "+error.message);
   }
 });
 
+$("backupFile").addEventListener("change",function(){
+  const file=this.files && this.files[0];
+
+  if(file){
+    importBackupFile(file);
+  }
+
+  this.value="";
+});
+
+/* INICIALIZAÇÃO */
+
 loadProjects();
 renderProjects();
+updateBackupStatus();
 
 })();
 </script>
